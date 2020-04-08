@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+package virtual_table;
+option go_package = "proto";
+
+
+message Event {
+    string id = 1;
+    string tableId = 2;
+    string type = 3;
+}
+
+
+message User {
+    string id = 1;
+    string name = 2;
+    string picture = 3;
+}
+
+message Character {
+    string id = 1;
+    string name = 2;
+    string picture = 3;
+    string playerId = 5;
+}
+
+message Message {
+    string id = 1;
+    string authorId = 2;
+    string asCharacterId = 3;
+    string content = 4;
+}
+
+message Discussion {
+    string id = 1;
+    string name = 2;
+    bool global = 3;
+    repeated string between = 4;
+    repeated Message messages = 5;
+}
+
+message Table {
+    string id = 1;
+    User gameMaster = 2;
+    repeated User players = 3;
+    repeated Character characters = 4;
+    repeated Discussion discussions = 5;
+    repeated Event events = 6;
+}
+
+// Input messages
+
+message Void {
+}
+
+message CreateTableInput {
+    string name = 1;
+}
+
+message JoinTableCharacterInput {
+    string name = 1;
+    string picture = 2;
+}
+
+message JoinTableInput {
+    string tableId = 1;
+}
+
+message CreateCharacterInput {
+    string tableId = 1;
+    string name = 2;
+    string picture = 3;
+}
+
+message ChangeCharacterPlayerInput {
+    string tableId = 1;
+    string characterId = 2;
+    string userId = 3;
+}
+
+message CreateDiscussionInput {
+    string tableId = 1;
+    string name = 2;
+    repeated string userIds = 3;
+}
+
+message AddUserToDiscussionInput {
+    string tableId = 1;
+    string discussionId = 2;
+    string userId = 3;
+}
+
+message DeleteDiscussionInput {
+    string tableId = 1;
+    string discussionId = 2;
+}
+
+message SendMessageInput {
+    string tableId = 1;
+    string discussionId = 2;
+    string message = 3;
+}
+
+message TableIdInput {
+    string id = 1;
+}
+
+service VirtualTableService {
+    // C
+    rpc CreateTable (CreateTableInput) returns (Table) {
+    }
+    
+    // R
+    rpc ListTables (Void) returns (stream Table) {
+    }
+    rpc GetTable (TableIdInput) returns (Table) {
+    }
+    
+    // U
+    rpc JoinTable (JoinTableInput) returns (Event) {
+    }
+    rpc CreateCharacter (CreateCharacterInput) returns (Event) {
+    }
+    rpc ChangeCharacterPlayer (ChangeCharacterPlayerInput) returns (Event) {
+    }
+    rpc CreateDiscussion (CreateDiscussionInput) returns (Event) {
+    }
+    rpc AddUserToDiscussion (AddUserToDiscussionInput) returns (Event) {
+    }
+    rpc DeleteDiscussion (DeleteDiscussionInput) returns (Event) {
+    }
+    rpc SendMessage (SendMessageInput) returns (Event) {
+    }
+    
+    // R
+    rpc Subscribe (TableIdInput) returns (stream Event) {
+    }
+}
