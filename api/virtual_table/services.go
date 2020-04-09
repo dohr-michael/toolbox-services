@@ -146,7 +146,8 @@ func (s *tableServices) CreateTable(cmd CreateTableCmd, ctx context.Context) (Ev
 	user := app_context.GetAuthUser(ctx)
 
 	table := Table{Id: primitive.NewObjectID(), Name: cmd.Name, Master: user, Players: []string{}, Characters: []Character{}, Discussions: []Discussion{
-		{Id: uuid.New().String(), Name: "General", Persistent: true, Between: []string{"*"}, Messages: []Message{}},
+		{Id: uuid.New().String(), Name: "General", Persistent: true, Between: []string{"*"}, Messages: []Message{}}, // Channels between all users
+		{Id: uuid.New().String(), Name: "Master", Persistent: true, Between: []string{user}, Messages: []Message{}}, // Master screen channel
 	}}
 	evt := TableCreated{EventBase: NewEventBase(table.Id, []string{"*"}, user), Name: cmd.Name}
 	evtAsMap, err := WriteEvent(&evt, "bson")
